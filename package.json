@@ -1,7 +1,7 @@
 {
   "name": "detection-app",
   "version": "0.1.0",
-  "homepage": "https://github.com/ricardoyepezz/detection-app",
+  "homepage": "https://ricardoyepezz.github.io/detection-app",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
