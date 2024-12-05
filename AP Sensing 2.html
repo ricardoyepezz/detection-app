@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Sensing 2</title>
+    <style>
+        table {
+            width: auto;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        th {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+        }
+        td {
+            background-color: grey;
+            color: black;
+        }
+        .button {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="center">Equipo y Accesorios</h1>
+    <div id="equipoAccesorios" class="center"></div>
+    <h1 class="center">Sensor Cable & Components</h1>
+    <div id="sensorCableComponents" class="center"></div>
+    <div class="center">
+        <button type="button" class="button" onclick="anterior()">Página Principal</button>
+        <button type="button" class="button" onclick="siguiente()">Siguiente</button>
+    </div>
+
+    <script>
+        // Obtener datos del localStorage
+        const aplicacion = localStorage.getItem('aplicacion');
+        const canales = parseInt(localStorage.getItem('canales'));
+        const metrosFO = parseFloat(localStorage.getItem('metrosFO'));
+        const topologia = localStorage.getItem('topologia');
+
+        function generarTabla() {
+            const equipoAccesorios = document.getElementById('equipoAccesorios');
+            let equipo = '';
+            let codigoEquipo = '';
+            let descripcionEquipo = '';
+            let tarjeta = '';
+
+            if (aplicacion === 'deteccion' || aplicacion === 'dual') {
+                equipo = 'LHD';
+                codigoEquipo = 'N4587A';
+                descripcionEquipo = 'Detección Lineal de Calor por F.O. (LHD)';
+            } else {
+                equipo = 'DTS';
+                codigoEquipo = 'N4585A';
+                descripcionEquipo = 'Distributed Temperature Sensing (DTS)';
+            }
+
+            if (canales <= 2) {
+                tarjeta = 'N458xA-C02';
+            } else {
+                tarjeta = 'N458xA-C04';
+            }
+
+            equipoAccesorios.innerHTML = `
+                <table>
+                    <tr>
+                        <th>Ítem</th>
+                        <th>Cantidad</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>${codigoEquipo}</td>
+                        <td>${descripcionEquipo}</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>1</td>
+                        <td>${tarjeta}</td>
+                        <td>${canales <= 2 ? '2 Canales de Sensores' : '4 Canales de Sensores'}</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>1</td>
+                        <td>N45xxA-DW</td>
+                        <td>Carcasa de Montaje en Pared (Incluye Pantalla)</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>1</td>
+                        <td>N45XXA-P01</td>
+                        <td>Interfaz Modbus TCP/IP integrada</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>1</td>
+                        <td>N45XXA-SR0</td>
+                        <td>Tablero de Relés</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>1</td>
+                        <td>A4500A</td>
+                        <td>Tablero exterior con ventana</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>1</td>
+                        <td>A1026A</td>
+                        <td>Juego de Cables de Salida para Relé</td>
+                    </tr>
+                </table>
+            `;
+        }
+
+        function generarTablaSensorCable() {
+            const sensorCableComponents = document.getElementById('sensorCableComponents');
+
+            // Calcular cantidades
+            const A = Math.ceil(metrosFO * 1.1);
+            const B = Math.ceil(metrosFO / 3000);
+            const C = topologia === 'claseB' ? 2 * canales : 1 * canales;
+            const D = topologia === 'claseB' ? 2 * canales : 1 * canales;
+            const E = topologia === 'claseB' ? canales : 0;
+            const F = topologia === 'claseB' ? 2 * canales : 1 * canales;
+            const G = Math.ceil(metrosFO / 100);
+
+            sensorCableComponents.innerHTML = `
+                <table>
+                    <tr>
+                        <th>Ítem</th>
+                        <th>Cantidad</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>${A}</td>
+                        <td>S2002A</td>
+                        <td>Sensor Cable - Steel FRNC (m)</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>${B}</td>
+                        <td>S2000A-999</td>
+                        <td>Cable Drum</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>${C}</td>
+                        <td>S2008A</td>
+                        <td>E2000 8° APC Pigtail 5M</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>${D}</td>
+                        <td>S2008A</td>
+                        <td>E2000 8° APC Pigtail 30M</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>${E}</td>
+                        <td>S2011A</td>
+                        <td>E2000 APC Adapter</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>${F}</td>
+                        <td>A2501A</td>
+                        <td>Heavy Duty Splice Box</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>${G}</td>
+                        <td>A2406A-009</td>
+                        <td>Self Locking Polyamide Clamp (100pc)</td>
+                    </tr>
+                </table>
+            `;
+        }
+
+        function anterior() {
+            // Redirigir a la página principal
+            window.location.href = 'AP Sensing 1.html';
+        }
+
+        function siguiente() {
+            // Redirigir a la siguiente página
+            window.location.href = 'siguiente_pagina.html';
+        }
+
+        // Generar las tablas al cargar la página
+        window.onload = function() {
+            generarTabla();
+            generarTablaSensorCable();
+        };
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

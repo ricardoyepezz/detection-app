@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Sensing 1</title>
+    <style>
+        table {
+            width: auto;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        th {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+        }
+        td {
+            background-color: grey;
+            color: black;
+        }
+        .button {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="center">Cotizador de Correas Transportadoras</h1>
+    <form id="cotizadorForm">
+        <table>
+            <tr>
+                <th>Longitud de la correa (m)</th>
+                <td><input type="number" id="longitud" name="longitud" required></td>
+            </tr>
+            <tr>
+                <th>Ancho de la correa (m)</th>
+                <td><input type="number" id="ancho" name="ancho" required></td>
+            </tr>
+            <tr>
+                <th>Distancia de LHD a la cabecera (m)</th>
+                <td><input type="number" id="distancia" name="distancia" required></td>
+            </tr>
+            <tr>
+                <th>Número de estaciones de polines</th>
+                <td><input type="number" id="estaciones" name="estaciones" required></td>
+            </tr>
+            <tr>
+                <th>Aplicación del sistema</th>
+                <td>
+                    <select id="aplicacion" name="aplicacion" required>
+                        <option value="deteccion">Detección</option>
+                        <option value="monitoreo">Monitoreo</option>
+                        <option value="dual">Dual</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Topología</th>
+                <td>
+                    <select id="topologia" name="topologia" required>
+                        <option value="claseA">Clase A</option>
+                        <option value="claseB">Clase B</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Tipo de carga</th>
+                <td>
+                    <select id="carga" name="carga" required>
+                        <option value="combustible">Material combustible</option>
+                        <option value="noCombustible">Material no combustible</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Tipo de correa</th>
+                <td>
+                    <select id="tipoCorrea" name="tipoCorrea" required>
+                        <option value="estandar">Estándar</option>
+                        <option value="tubular">Tubular</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Correa con retorno</th>
+                <td>
+                    <select id="retorno" name="retorno" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Canales de medición</th>
+                <td>
+                    <select id="canales" name="canales" required>
+                        <option value="1">1 canal</option>
+                        <option value="2">2 canales</option>
+                        <option value="3">3 canales</option>
+                        <option value="4">4 canales</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <div class="center">
+            <button type="button" class="button" onclick="calcular()">Calcular</button>
+        </div>
+    </form>
+    <div id="resultados" class="center"></div>
+    <div class="center">
+        <button type="button" class="button" onclick="paginaPrincipal()">Página Principal</button>
+        <button type="button" class="button" onclick="siguiente()">Siguiente</button>
+    </div>
+
+    <script>
+        function calcular() {
+            // Obtener valores del formulario
+            const longitud = parseFloat(document.getElementById('longitud').value);
+            const ancho = parseFloat(document.getElementById('ancho').value);
+            const distancia = parseFloat(document.getElementById('distancia').value);
+            const estaciones = parseInt(document.getElementById('estaciones').value);
+            const aplicacion = document.getElementById('aplicacion').value;
+            const topologia = document.getElementById('topologia').value;
+            const carga = document.getElementById('carga').value;
+            const tipoCorrea = document.getElementById('tipoCorrea').value;
+            const retorno = document.getElementById('retorno').value;
+            const canales = parseInt(document.getElementById('canales').value);
+
+            // Calcular cantidad de vueltas
+            let vueltas = 0;
+            if (retorno === 'si' && carga === 'combustible') {
+                vueltas = 4;
+            } else if (retorno === 'si' && carga === 'noCombustible') {
+                vueltas = 3;
+            } else if (retorno === 'no' && carga === 'combustible') {
+                vueltas = 3;
+            } else if (retorno === 'no' && carga === 'noCombustible') {
+                vueltas = 2;
+            }
+
+            if (carga === 'combustible' && ancho >= 2) {
+                vueltas += Math.floor(ancho / 2);
+            }
+
+            if (topologia === 'claseA' && vueltas % 2 !== 0) {
+                vueltas += 1;
+            }
+
+            // Calcular metros de FO
+            let A = topologia === 'claseA' ? distancia * 2 : distancia;
+            let B = longitud * vueltas;
+            let C = estaciones * 3;
+            let metrosFO = A + B + C;
+
+            // Mostrar resultados
+            document.getElementById('resultados').innerHTML = `
+                <table>
+                    <tr>
+                        <th>Cantidad de vueltas</th>
+                        <td>${vueltas}</td>
+                    </tr>
+                    <tr>
+                        <th>Metros de FO</th>
+                        <td>${metrosFO}</td>
+                    </tr>
+                </table>
+            `;
+
+            // Guardar datos en localStorage para el segundo archivo
+            localStorage.setItem('aplicacion', aplicacion);
+            localStorage.setItem('canales', canales);
+            localStorage.setItem('metrosFO', metrosFO);
+            localStorage.setItem('topologia', topologia);
+        }
+
+        function paginaPrincipal() {
+            // Redirigir a la página principal
+            window.location.href = 'Portada';
+        }
+
+        function siguiente() {
+            // Redirigir a la siguiente página
+            window.location.href = 'AP Sensing 2.html';
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
