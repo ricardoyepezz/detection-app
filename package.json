@@ -1,7 +1,7 @@
 {
   "name": "detection-app",
   "version": "0.1.0",
-  "homepage": "https://ricardoyepezz.github.io/detection-app",
+  "homepage": "https://ricardoyepezz.github.io/detection-app/",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -39,6 +39,9 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^6.2.0"
+    "autoprefixer": "^10.4.20",
+    "gh-pages": "^6.2.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16"
   }
 }
